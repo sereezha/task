@@ -45,9 +45,3 @@ export enum PlanTypes {
   MONTHLY_FULL = "monthly_full",
   ANNUAL = "annual",
 }
-
-export const PLAN_TYPES = [
-  PlanTypes.MONTHLY,
-  PlanTypes.MONTHLY_FULL,
-  PlanTypes.ANNUAL,
-];

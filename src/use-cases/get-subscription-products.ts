@@ -1,4 +1,4 @@
-import { Currency } from "../modules/choose-plan-page/constants";
+import { Currency, PlanTypes } from "../modules/choose-plan-page/constants";
 import React from "react";
 
 export enum PaymentPlanId {
@@ -24,6 +24,8 @@ export type Product = {
   name: PaymentPlanId;
   trial_payment_action: string | null;
   price: Price;
+  disabledFeatures: number[];
+  type: PlanTypes;
 };
 
 interface IGetSubscriptionProducts {
@@ -44,6 +46,8 @@ export function useGetSubscriptionProducts(): IGetSubscriptionProducts {
       id: "7263778346846873jdbsbd4738749",
       name: PaymentPlanId.MONTHLY,
       trial_payment_action: null,
+      disabledFeatures: [3, 4, 5, 6, 7],
+      type: PlanTypes.MONTHLY,
       price: {
         country: null,
         currency: Currency.USD,
@@ -55,6 +59,8 @@ export function useGetSubscriptionProducts(): IGetSubscriptionProducts {
       id: "7263778346846873jdbsb687r76877676587",
       name: PaymentPlanId.MONTHLY_FULL,
       trial_payment_action: null,
+      disabledFeatures: [],
+      type: PlanTypes.MONTHLY_FULL,
       price: {
         country: null,
         currency: Currency.USD,
@@ -66,6 +72,8 @@ export function useGetSubscriptionProducts(): IGetSubscriptionProducts {
       id: "7263778346846873jdbsb687r76877676587hgcvjhvhgv",
       name: PaymentPlanId.ANNUAL,
       trial_payment_action: "auth_void",
+      disabledFeatures: [],
+      type: PlanTypes.ANNUAL,
       price: {
         country: null,
         currency: Currency.USD,

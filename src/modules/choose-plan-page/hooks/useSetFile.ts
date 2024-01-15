@@ -26,5 +26,9 @@ export const useSetFile = () => {
     handler();
   }, []);
 
-  return file;
+  return {
+    file,
+    fileName: file ? file.filename : null,
+    fileType: file ? file.internal_type : null,
+  };
 };

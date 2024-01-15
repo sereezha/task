@@ -1,3 +1,4 @@
+import { NextRouter } from "next/router";
 import check from "./assets/check.svg";
 import cross from "./assets/cross.svg";
 import {
@@ -47,22 +48,22 @@ export const getAnnualFormattedPrice = (
 };
 
 interface IGetPlanBullets {
-  planType: string;
-  disabledItemsIndexes: number[];
+  type: string;
+  disabledFeatures: number[];
   t: TranslationFunction;
 }
 
 export const getPlanBullets = ({
-  planType,
-  disabledItemsIndexes,
+  type,
+  disabledFeatures,
   t,
 }: IGetPlanBullets) => {
   const bulletPoints = [];
 
   for (let i = 0; i < 8; i++) {
     bulletPoints.push({
-      imgSrc: disabledItemsIndexes.includes(i) ? cross : check,
-      text: <span>{t(`payment_page.plans.${planType}.bullet${i + 1}`)}</span>,
+      imgSrc: disabledFeatures.includes(i) ? cross : check,
+      text: <span>{t(`payment_page.plans.${type}.bullet${i + 1}`)}</span>,
     });
   }
 
@@ -70,19 +71,19 @@ export const getPlanBullets = ({
 };
 
 interface IGetPlanPrices {
-  planType: string;
+  type: string;
   fullPrice: number;
   trialPrice: number;
   currency: Currency;
 }
 
 export const getPlanPrices = ({
-  planType,
+  type,
   fullPrice,
   trialPrice,
   currency,
 }: IGetPlanPrices) => {
-  return planType !== PlanTypes.ANNUAL
+  return type !== PlanTypes.ANNUAL
     ? {
         price: getTrialFormattedPrice(trialPrice, currency),
         fullPrice: getTrialFormattedPrice(fullPrice, currency),
@@ -93,3 +94,5 @@ export const getPlanPrices = ({
         price: getAnnualFormattedPrice(fullPrice, currency),
       };
 };
+
+export const isFromEmail = (router: NextRouter) => router.query?.fromEmail === "true";

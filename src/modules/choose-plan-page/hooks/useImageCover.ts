@@ -72,5 +72,5 @@ export const useImageCover = (file: ApiFile) => {
     }
   }, [file]);
 
-  return { isImageLoading, fileLink, imagePDF };
+  return { isImageLoading, fileLink, imagePDF: imagePDF ? imagePDF : null };
 };
