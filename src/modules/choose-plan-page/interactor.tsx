@@ -1,18 +1,18 @@
-import { PAGE_LINKS } from '../../constants';
-import { useRemoteConfig } from '../../providers/remote-config-provider';
+import { PAGE_LINKS } from "../../constants";
+import { useRemoteConfig } from "../../providers/remote-config-provider";
 import {
   PaymentPlanId,
   useGetSubscriptionProducts,
-} from '../../use-cases/get-subscription-products';
-import { PLAN_TYPES, PlanTypes } from './constants';
-import { getPlanBullets, getPlanPrices } from './helpers';
-import { useAnalytics } from './hooks/useAnalytics';
-import { useCheckAuth } from './hooks/useCheckAuth';
-import { useImageCover } from './hooks/useImageCover';
-import { useSetFile } from './hooks/useSetFile';
-import { IPaymentPageInteractor, Plan, TranslationFunction } from './types';
-import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+} from "../../use-cases/get-subscription-products";
+import { PLAN_TYPES, PlanTypes } from "./constants";
+import { getPlanBullets, getPlanPrices } from "./helpers";
+import { useAnalytics } from "./hooks/useAnalytics";
+import { useCheckAuth } from "./hooks/useCheckAuth";
+import { useImageCover } from "./hooks/useImageCover";
+import { useSetFile } from "./hooks/useSetFile";
+import { IPaymentPageInteractor, Plan, TranslationFunction } from "./types";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 export const usePaymentPageInteractor = (): IPaymentPageInteractor => {
   const router = useRouter();
@@ -28,13 +28,13 @@ export const usePaymentPageInteractor = (): IPaymentPageInteractor => {
   useCheckAuth();
 
   const onCommentsFlip = () => {
-    sendAnalytics('send event analytic0');
+    sendAnalytics("send event analytic0");
   };
 
   const onSelectPlan = (plan: PaymentPlanId) => {
     if (selectedPlan === plan) {
       setSelectedPlan(plan);
-      onContinue('planTab');
+      onContinue("planTab");
 
       return;
     }
@@ -42,32 +42,32 @@ export const usePaymentPageInteractor = (): IPaymentPageInteractor => {
     const product = products?.find((item) => item.name === plan);
 
     sendAnalytics(
-      'send event analytic1',
-      'productId: ',
+      "send event analytic1",
+      "productId: ",
       plan,
-      'currency: ',
-      product?.price?.currency || 'USD',
-      'value: ',
+      "currency: ",
+      product?.price?.currency || "USD",
+      "value: ",
       (product?.price?.price || 0) / 100
     );
   };
 
   const onContinue = (place?: string) => {
     sendAnalytics(
-      'send event analytic2',
-      'place: ',
-      place ? place : 'button',
-      'planName: ',
+      "send event analytic2",
+      "place: ",
+      place ? place : "button",
+      "planName: ",
       selectedPlan
     );
 
-    localStorage.setItem('selectedPlan', selectedPlan);
+    localStorage.setItem("selectedPlan", selectedPlan);
 
     router.push({ pathname: `${PAGE_LINKS.PAYMENT}`, query: router.query });
   };
 
   useEffect(() => {
-    if (router.query?.fromEmail === 'true') {
+    if (router.query?.fromEmail === "true") {
       setSelectedPlan(PaymentPlanId.MONTHLY_FULL_SECOND_EMAIL);
       return;
     }
@@ -116,11 +116,11 @@ export const usePaymentPageInteractor = (): IPaymentPageInteractor => {
     fileType: file ? file.internal_type : null,
     fileLink,
     isEditorFlow:
-      (router.query?.source === 'editor' ||
-        router.query?.source === 'account') &&
+      (router.query?.source === "editor" ||
+        router.query?.source === "account") &&
       router.query.convertedFrom === undefined,
-    isSecondEmail: router.query?.fromEmail === 'true',
-    isThirdEmail: router.query?.fromEmail === 'true',
+    isSecondEmail: router.query?.fromEmail === "true",
+    isThirdEmail: router.query?.fromEmail === "true",
 
     isRemoteConfigLoading,
 

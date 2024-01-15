@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
-import { useUser } from '../../../providers/user-provider';
-import { API } from '../../../services/api';
-import { useEffect } from 'react';
-import { PAGE_LINKS } from '../../../constants';
+import { PAGE_LINKS } from "../../../constants";
+import { useUser } from "../../../providers/user-provider";
+import { API } from "../../../services/api";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export const useCheckAuth = () => {
   const { user } = useUser();

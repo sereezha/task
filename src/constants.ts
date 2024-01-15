@@ -1,5 +1,5 @@
 export enum PAGE_LINKS {
-  MAIN = '/',
-  PAYMENT = '/payment',
-  DASHBOARD = '/dashboard',
+  MAIN = "/",
+  PAYMENT = "/payment",
+  DASHBOARD = "/dashboard",
 }

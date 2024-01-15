@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export const useAnalytics = () => {
   const sendAnalytics = (...args: any) => {
@@ -6,14 +6,14 @@ export const useAnalytics = () => {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('select_plan_view')) {
-      sendAnalytics('send event analytic3');
+    if (!localStorage.getItem("select_plan_view")) {
+      sendAnalytics("send event analytic3");
     }
 
-    localStorage.setItem('select_plan_view', 'true');
+    localStorage.setItem("select_plan_view", "true");
 
     return () => {
-      localStorage.removeItem('select_plan_view');
+      localStorage.removeItem("select_plan_view");
     };
   }, []);
 

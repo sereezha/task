@@ -1,5 +1,5 @@
-import { PaymentPlanId } from '../../use-cases/get-subscription-products';
-import { InternalFileType } from './constants';
+import { PaymentPlanId } from "../../use-cases/get-subscription-products";
+import { InternalFileType } from "./constants";
 
 export type Bullets = {
   imgSrc: string;

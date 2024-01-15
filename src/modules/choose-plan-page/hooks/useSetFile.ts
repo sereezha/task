@@ -1,7 +1,7 @@
-import { API } from '../../../services/api';
-import { ApiFile } from '../../../services/api/types';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { API } from "../../../services/api";
+import { ApiFile } from "../../../services/api/types";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export const useSetFile = () => {
   const router = useRouter();

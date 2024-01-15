@@ -1,6 +1,6 @@
-import { Header } from '../../header';
-import { PaymentPageRouter } from './router';
-import React from 'react';
+import { Header } from "../../header";
+import { PaymentPageRouter } from "./router";
+import React from "react";
 
 export interface IProps {}
 export const PaymentPage: React.FC<IProps> = () => {

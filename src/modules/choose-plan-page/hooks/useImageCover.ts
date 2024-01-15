@@ -1,10 +1,10 @@
-import { API } from '../../../services/api';
-import { ApiFile } from '../../../services/api/types';
-import { generatePDFCover } from '../../../use-cases/generate-pdf-cover';
-import { InternalFileType } from '../constants';
-import { getFileExtension, isImage } from '../helpers';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { API } from "../../../services/api";
+import { ApiFile } from "../../../services/api/types";
+import { generatePDFCover } from "../../../use-cases/generate-pdf-cover";
+import { InternalFileType } from "../constants";
+import { getFileExtension, isImage } from "../helpers";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export const useImageCover = (file: ApiFile) => {
   const router = useRouter();
@@ -17,7 +17,7 @@ export const useImageCover = (file: ApiFile) => {
     if (router.query?.file) {
       const queryFile = router.query.file as string;
       const method =
-        router.query.editedFile === 'true' ? editedFile : downloadFile;
+        router.query.editedFile === "true" ? editedFile : downloadFile;
 
       return method(queryFile).then((r) => r.url);
     }

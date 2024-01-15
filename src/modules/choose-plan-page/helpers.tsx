@@ -1,27 +1,27 @@
-import check from './assets/check.svg';
-import cross from './assets/cross.svg';
+import check from "./assets/check.svg";
+import cross from "./assets/cross.svg";
 import {
   Currency,
   InternalFileType,
   PlanTypes,
   imagesFormat,
-} from './constants';
-import { TranslationFunction } from './types';
+} from "./constants";
+import { TranslationFunction } from "./types";
 
 export const getFileExtension = (filename: string) =>
-  filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+  filename.substring(filename.lastIndexOf(".") + 1, filename.length);
 
 export const isImage = (fileType: InternalFileType) =>
   imagesFormat.includes(fileType);
 
 export const getCurrency = (currency: Currency = Currency.EUR) => {
   const mapper = {
-    USD: '$',
-    GBP: '£',
-    default: '€',
+    USD: "$",
+    GBP: "£",
+    default: "€",
   };
 
-  const selectedCurrency = mapper[currency] || mapper['default'];
+  const selectedCurrency = mapper[currency] || mapper["default"];
 
   return selectedCurrency;
 };
