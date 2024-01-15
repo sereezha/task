@@ -1,4 +1,5 @@
 import React from "react";
+import { Currency } from "../modules/choose-plan-page/constants";
 
 export enum PaymentPlanId {
   MONTHLY = "pdf_master_monthly_49_99_in_all_countries_with_trial_0_99",
@@ -13,7 +14,7 @@ export enum PaymentPlanId {
 
 type Price = {
   country: string | null
-  currency: string
+  currency: Currency
   price: number
   trial_price: number
 }
@@ -44,7 +45,7 @@ export function useGetSubscriptionProducts(): IGetSubscriptionProducts {
     trial_payment_action: null,
     price: {
       country: null,
-      currency: 'USD',
+      currency: Currency.USD,
       price: 4999,
       trial_price: 99
     }
@@ -55,7 +56,7 @@ export function useGetSubscriptionProducts(): IGetSubscriptionProducts {
     trial_payment_action: null,
     price: {
       country: null,
-      currency: 'USD',
+      currency: Currency.USD,
       price: 4999,
       trial_price: 199
     }
@@ -66,7 +67,7 @@ export function useGetSubscriptionProducts(): IGetSubscriptionProducts {
     trial_payment_action: 'auth_void',
     price: {
       country: null,
-      currency: 'USD',
+      currency: Currency.USD,
       price: 29900,
       trial_price: null
     }

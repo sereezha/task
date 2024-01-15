@@ -1,4 +1,5 @@
 import { AxiosClient } from '@/services/api/endpoints/axios-client'
+import { Currency } from '../../../modules/choose-plan-page/constants'
 
 export class PaymentEndpoint {
   private readonly httpClient = new AxiosClient()
@@ -46,7 +47,7 @@ export interface AlternativeSubscriptionResponse {
   customerId: string
   orderId: string
   amount: number
-  currency: string
+  currency: Currency
   status: string
   url: string
 }

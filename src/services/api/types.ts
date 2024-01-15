@@ -1,4 +1,4 @@
-import { InternalFileType } from "../../modules/choose-plan-page/interactor";
+import { Currency, InternalFileType } from "../../modules/choose-plan-page/constants";
 
 export interface ApiFile {
   id: string;
@@ -20,7 +20,7 @@ export interface UserSubscription {
   trial_price: number;
   billingPeriod: BillingPeriod;
   cancelCode: string | null;
-  currency: string;
+  currency: Currency;
   id: string;
 }
 

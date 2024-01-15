@@ -1,18 +1,21 @@
-import { LoadingAnimation } from "../../components/loading-animation";
-import { PrimaryButton } from "../../components/primary-button";
-import { PaymentPlanId } from "../../use-cases/get-subscription-products";
-import black_star from "./assets/black-star.svg";
-import fake_file from "./assets/fake-file.svg";
-import green_check_b from "./assets/green-check-b.svg";
-import radio_off from "./assets/radio-off.svg";
-import radio_on from "./assets/radio-on.svg";
-import stars_doc_b from "./assets/stars_document-b.svg";
-import { IPaymentPageInteractor, InternalFileType } from "./interactor";
-import classNames from "classnames";
-import { useTranslation } from "next-i18next";
-import Head from "next/head";
-import Image from "next/image";
-import React from "react";
+import { LoadingAnimation } from '../../components/loading-animation';
+import { PrimaryButton } from '../../components/primary-button';
+import { PaymentPlanId } from '../../use-cases/get-subscription-products';
+import black_star from './assets/black-star.svg';
+import fake_file from './assets/fake-file.svg';
+import green_check_b from './assets/green-check-b.svg';
+import radio_off from './assets/radio-off.svg';
+import radio_on from './assets/radio-on.svg';
+import stars_doc_b from './assets/stars_document-b.svg';
+import { InternalFileType } from './constants';
+import { isImage } from './helpers';
+import { usePaymentPageInteractor } from './interactor';
+import classNames from 'classnames';
+import { useTranslation } from 'next-i18next';
+import Head from 'next/head';
+import Image from 'next/image';
+import { useEffect, useCallback } from 'react';
+import React from 'react';
 
 const BannerYourDocIsReady: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -28,50 +31,40 @@ const BannerYourDocIsReady: React.FC<{}> = () => {
           alt="green_check"
           className="mr-1.5 tablet:mr-3 w-4 tablet:w-6"
         />
-        <p>{t("payment_page.document_is_ready")}</p>
+        <p>{t('payment_page.document_is_ready')}</p>
       </div>
     </>
   );
 };
 
 export interface IProps {
-  interactor: IPaymentPageInteractor;
   header: React.ReactNode;
 }
-export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
+
+export const PaymentPageRouter: React.FC<IProps> = ({ header }) => {
   const {
-    onContinue,
-    selectedPlan,
-    onSelectPlan,
-    onCommentsFlip,
+    fileLink,
+    fileType,
+    getPlans,
     imagePDF,
     isImageLoading,
-    fileLink,
+    isPlansLoading,
+    isRemoteConfigLoading,
     isSecondEmail,
     isThirdEmail,
-  } = interactor;
+    onCommentsFlip,
+    onContinue,
+    onSelectPlan,
+    selectedPlan,
+  } = usePaymentPageInteractor();
 
-  const isPDFFile = interactor.fileType === "PDF";
-  const isImage =
-    interactor.fileType === InternalFileType.JPEG ||
-    interactor.fileType === InternalFileType.JPG ||
-    interactor.fileType === InternalFileType.PNG;
+  const isPDFFile = fileType === InternalFileType.PDF;
+  const isImageFile = isImage(fileType);
   const { t } = useTranslation();
-  const plans = interactor.getPlans(t);
-  // const plan = plans.find((item) => item.id === interactor.selectedPlan)
+  const plans = getPlans(t);
+  const plan = plans.find((item) => item.id === selectedPlan);
 
-  React.useEffect(() => {
-    if (document.getElementsByClassName("swiper-wrapper")[0]) {
-      // @ts-ignore
-      document.getElementsByClassName("swiper-wrapper")[0].style.display =
-        "flex";
-    }
-  }, [interactor.isRemoteConfigLoading, interactor.isPlansLoading]);
-
-  const [isHoveredLeft, setIsHoveredLeft] = React.useState(false);
-  const [isHoveredRight, setIsHoveredRight] = React.useState(false);
-
-  const renderImage = React.useCallback(() => {
+  const renderImage = useCallback(() => {
     if (isPDFFile) {
       if (imagePDF !== null) {
         return (
@@ -79,23 +72,23 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
             src={URL.createObjectURL(imagePDF)}
             width={312}
             height={472}
-            alt="file_img"
+            alt="File preview"
           />
         );
       }
 
       if (imagePDF === null && !isImageLoading) {
-        return <Image src={fake_file} alt="fake_file" />;
+        return <Image src={fake_file} alt="Fake file preview" />;
       }
 
       return null;
     }
 
-    if (isImage && fileLink) {
+    if (isImageFile && fileLink) {
       return (
         <Image
           src={fileLink}
-          alt="file_img"
+          alt="File preview"
           className="w-full max-w-[222px] h-auto tablet:max-w-[303px]"
           width={250}
           height={300}
@@ -103,8 +96,21 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
       );
     }
 
-    return <Image src={fake_file} alt="fake_file" />;
-  }, [imagePDF, isPDFFile, isImageLoading, isImage, fileLink]);
+    return <Image src={fake_file} alt="Fake file preview" />;
+  }, [imagePDF, isPDFFile, isImageLoading, isImageFile, fileLink]);
+
+  const fileElement = isImageLoading ? (
+    <div className="w-[400px]">
+      <LoadingAnimation currentState="loading" />
+    </div>
+  ) : (
+    <>
+      <BannerYourDocIsReady />
+      {renderImage()}
+    </>
+  );
+
+  const isSecondOrThirdEmail = isSecondEmail || isThirdEmail;
 
   return (
     <>
@@ -124,7 +130,7 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
             onClick={() => onContinue()}
             data-testid="choose-plan-continue-button"
           >
-            {t("payment_page.continue")}
+            {t('payment_page.continue')}
           </PrimaryButton>
         </div>
         <div className="tablet:max-w-[1140px] mobile:max-w-[570px] mx-auto px-4 small-desktop:px-0">
@@ -134,13 +140,13 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
                 tablet:leading-[54px] mobile:mx-auto tablet:mx-0 text-center mobile:text-start"
               data-testid="choose-plan-headline"
             >
-              {t("payment_page.choose_plan")}
+              {t('payment_page.choose_plan')}
             </h1>
             <PrimaryButton
               className="hidden mobile:block w-[273px] !text-[20px] !leading-[30px] !py-4 !rounded-[12px] font-bold"
               onClick={() => onContinue()}
             >
-              {t("payment_page.continue")}
+              {t('payment_page.continue')}
             </PrimaryButton>
           </div>
 
@@ -148,20 +154,14 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
             <div className="tablet:flex tablet:gap-x-4 max-w-[1140px] mx-auto">
               <div className="max-w-[466px] w-full">
                 <div className="relative hidden tablet:flex items-center justify-center bg-[#EBE7F5] px-[81px] py-10 rounded-[10px] tablet:min-h-[500px]">
-                  {isImageLoading && (
-                    <div className="w-[400px]">
-                      <LoadingAnimation currentState="loading" />
-                    </div>
-                  )}
-                  <BannerYourDocIsReady />
-                  {renderImage()}
+                  {fileElement}
                 </div>
                 <div className="hidden tablet:block">
                   <div className="flex flex-col gap-y-3 justify-center items-center text-[16px] leading-[24px] mt-6 text-center">
                     <p>
-                      <strong>4.5</strong> {t("payment_page.out_of")}{" "}
-                      <strong>5</strong> {t("payment_page.based")} <br />
-                      {t("payment_page.reviews_counter")}
+                      <strong>4.5</strong> {t('payment_page.out_of')}{' '}
+                      <strong>5</strong> {t('payment_page.based')} <br />
+                      {t('payment_page.reviews_counter')}
                     </p>
                     <Image
                       src={stars_doc_b}
@@ -174,28 +174,18 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
               <div className="max-w-[658px] w-full mobile:max-w-full">
                 {plans.map((plan, id) => (
                   <div
+                    // тут index як key ок, бо ці плани не міняються
                     key={id}
                     className={classNames(
-                      "bg-[#FFFFFF] hover:cursor-pointer rounded-[12px] p-5 tablet:p-0 tablet:py-9 tablet:px-9 tablet:mb-4 mb-3 relative",
+                      'bg-[#FFFFFF] hover:cursor-pointer rounded-[12px] p-5 tablet:p-0 tablet:py-9 tablet:px-9 tablet:mb-4 mb-3 relative',
                       {
-                        "p-0 tablet:py-0 pt-[26px] pb-[14px] tablet:pt-[44px] tablet:pb-[28px] px-5":
-                          plan.id === PaymentPlanId.MONTHLY_FULL,
-                      },
-                      {
-                        "p-0 tablet:py-0 pt-[26px] pb-[14px] tablet:pt-[47px] tablet:pb-[19px] px-5":
-                          plan.id === PaymentPlanId.MONTHLY_FULL_SECOND_EMAIL,
-                      },
-                      {
-                        "p-0 tablet:py-0 pt-[26px] pb-[14px] tablet:pt-[47px] tablet:pb-[19px] px-5":
-                          plan.id === PaymentPlanId.MONTHLY_SECOND_EMAIL,
-                      },
-                      {
-                        "p-0 tablet:py-0 pt-[26px] pb-[14px] tablet:pt-[47px] tablet:pb-[19px] px-5":
-                          plan.id === PaymentPlanId.MONTHLY_FULL_THIRD_EMAIL,
-                      },
-                      {
-                        "p-0 tablet:py-0 pt-[26px] pb-[14px] tablet:pt-[47px] tablet:pb-[19px] px-5":
+                        'p-0 tablet:py-0 pt-[26px] pb-[14px] tablet:pt-[47px] tablet:pb-[19px] px-5':
+                          plan.id === PaymentPlanId.MONTHLY_FULL_SECOND_EMAIL ||
+                          plan.id === PaymentPlanId.MONTHLY_SECOND_EMAIL ||
+                          plan.id === PaymentPlanId.MONTHLY_FULL_THIRD_EMAIL ||
                           plan.id === PaymentPlanId.MONTHLY_THIRD_EMAIL,
+                        'p-0 tablet:py-0 pt-[26px] pb-[14px] tablet:pt-[44px] tablet:pb-[28px] px-5':
+                          plan.id === PaymentPlanId.MONTHLY_FULL,
                       }
                     )}
                     onClick={() => onSelectPlan(plan.id)}
@@ -210,19 +200,19 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
                           alt="black_star"
                           className="mr-[3px] tablet:mr-[5px]"
                         />
-                        <p>{t("payment_page.most_popular")}</p>
+                        <p>{t('payment_page.most_popular')}</p>
                       </div>
                     )}
 
                     {/* ==== for 2nd email and 3rd email the same layout ======*/}
 
-                    {(isSecondEmail || isThirdEmail) &&
+                    {isSecondOrThirdEmail &&
                       plan.id !== PaymentPlanId.ANNUAL && (
                         <div
                           className="flex justify-center items-center w-full bg-[#FF6A48] text-[#FFFFFF] text-[11px] leading-[18px]
                       tablet:text-[16px] tablet:leading-[22px] tablet:py-1 absolute top-0 left-0 rounded-[10px_10px_0_0] font-medium"
                         >
-                          <p>{t("payment_page.discount_for_monthly")}</p>
+                          <p>{t('payment_page.discount_for_monthly')}</p>
                         </div>
                       )}
 
@@ -230,22 +220,14 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
 
                     <div className="flex items-center justify-between text-[15px] tablet:text-[25px] font-semibold leading-[18px] tablet:leading-[30px]">
                       <div className="flex items-center">
-                        {selectedPlan === plan.id ? (
-                          <Image
-                            src={radio_on}
-                            alt="radio-off"
-                            className="w-6 tablet:w-7 mr-2 tablet:mr-4 cursor-pointer"
-                          />
-                        ) : (
-                          <Image
-                            src={radio_off}
-                            alt="radio-off"
-                            className="w-6 tablet:w-7 mr-2 tablet:mr-4 cursor-pointer"
-                          />
-                        )}
+                        <Image
+                          src={selectedPlan === plan.id ? radio_on : radio_off}
+                          alt="radio-off"
+                          className="w-6 tablet:w-7 mr-2 tablet:mr-4 cursor-pointer"
+                        />
                         <h4 className="font-[600]">
                           {plan.id === PaymentPlanId.MONTHLY_FULL_SECOND_EMAIL
-                            ? t("payment_page.plans.monthly_full.title_premium")
+                            ? t('payment_page.plans.monthly_full.title_premium')
                             : plan.title}
                         </h4>
                       </div>
@@ -260,68 +242,61 @@ export const PaymentPageRouter: React.FC<IProps> = ({ interactor, header }) => {
                 ))}
                 <div className="tablet:hidden my-4">
                   <div className="bg-[#EBE7F5] min-h-[390px] flex items-center justify-center px-[60px] py-[24px] rounded-[10px] relative">
-                    <BannerYourDocIsReady />
-                    {renderImage()}
+                    {fileElement}
                   </div>
                 </div>
-                {plans.map((plan, id) => (
-                  <div key={id}>
-                    {selectedPlan === plan.id && (
-                      <>
-                        <ul className="mobile:flex mobile:flex-col mobile:flex-wrap mobile:max-h-[144px]">
-                          {plan.bullets.map((point, inx) => (
-                            <li
-                              key={inx}
-                              className="text-[14px] tablet:text-[16px] leading-[18px] tablet:leading-[24px] font-[600] mb-3 last:mb-0 flex gap-x-2 mobile:items-center"
-                            >
-                              <Image src={point.imgSrc} alt="point" />
-                              {point.bullText}
-                            </li>
-                          ))}
-                        </ul>
-                        <p className="text-[14px] tablet:text-[17px] leading-[18px] tablet:leading-[24px] mt-4 tablet:mt-8 text-[#575757]">
-                          {plan.id === PaymentPlanId.ANNUAL ? (
-                            <>{plan.text}</>
-                          ) : (
-                            <>
-                              {!isSecondEmail && !isThirdEmail && (
-                                <>{plan.text}</>
-                              )}
-                              {(isSecondEmail || isThirdEmail) && (
-                                <>
-                                  {" "}
-                                  After 7 days, auto-renews{" "}
-                                  <s>
-                                    {plan.formattedCurrency}
-                                    {plan.fullPrice === "€17.49"
-                                      ? 34.99
-                                      : 49.99}
-                                  </s>{" "}
-                                  {plan.fullPrice} billed every month. Cancel
-                                  anytime.
-                                </>
-                              )}
-                            </>
-                          )}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                ))}
+
+                <ul className="mobile:flex mobile:flex-col mobile:flex-wrap mobile:max-h-[144px]">
+                  {plan.bullets.map((point, inx) => (
+                    <li
+                      // тут index як key ок, бо ці булети не міняються
+                      key={inx}
+                      className="text-[14px] tablet:text-[16px] leading-[18px] tablet:leading-[24px] font-[600] mb-3 last:mb-0 flex gap-x-2 mobile:items-center"
+                    >
+                      <Image
+                        src={point.imgSrc}
+                        alt={`This item ${
+                          point.checked ? 'includes' : 'does not include'
+                        }`}
+                      />
+                      {point.text}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-[14px] tablet:text-[17px] leading-[18px] tablet:leading-[24px] mt-4 tablet:mt-8 text-[#575757]">
+                  {plan.id === PaymentPlanId.ANNUAL ? (
+                    <>{plan.text}</>
+                  ) : (
+                    <>
+                      {!isSecondEmail && !isThirdEmail && <>{plan.text}</>}
+                      {isSecondOrThirdEmail && (
+                        <>
+                          {' '}
+                          After 7 days, auto-renews{' '}
+                          <s>
+                            {plan.formattedCurrency}
+                            {plan.fullPrice === '€17.49' ? 34.99 : 49.99}
+                          </s>{' '}
+                          {plan.fullPrice} billed every month. Cancel anytime.
+                        </>
+                      )}
+                    </>
+                  )}
+                </p>
 
                 <p className="text-[14px] leading-[18px] tablet:text-[17px] tablet:leading-[28px] text-[#575757]">
                   <span className="font-[700]">
-                    {t("payment_page.refund_description_1")}
-                  </span>{" "}
-                  <span>{t("payment_page.refund_description_2")}</span>{" "}
+                    {t('payment_page.refund_description_1')}
+                  </span>{' '}
+                  <span>{t('payment_page.refund_description_2')}</span>{' '}
                   <a
                     href="mailto:support@pdfmaster.app"
                     className="text-[#575757]"
                   >
                     support@pdfmaster.app
                   </a>
-                  {", "}
-                  <span>{t("payment_page.refund_description_3")}</span>
+                  {', '}
+                  <span>{t('payment_page.refund_description_3')}</span>
                 </p>
               </div>
             </div>
