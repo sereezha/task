@@ -1,4 +1,7 @@
-import { Currency, InternalFileType } from "../../modules/choose-plan-page/constants";
+import {
+  Currency,
+  InternalFileType,
+} from "../../modules/choose-plan-page/constants";
 
 export interface ApiFile {
   id: string;

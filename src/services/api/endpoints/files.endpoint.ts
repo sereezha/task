@@ -1,13 +1,13 @@
-import { InternalFileType } from '../../../modules/choose-plan-page/constants';
-import { ApiFile } from '../types';
+import { InternalFileType } from "../../../modules/choose-plan-page/constants";
+import { ApiFile } from "../types";
 
 async function mockGetFiles(): Promise<GetFilesResponse> {
   const mockFile: ApiFile = {
-    id: '1',
+    id: "1",
     size: 1024, // file size in bytes
-    filename: 'test.pdf',
+    filename: "test.pdf",
     created_at: new Date(),
-    aws_url: '/files/test.pdf', // replace with actual URL
+    aws_url: "/files/test.pdf", // replace with actual URL
     internal_type: InternalFileType.PDF, // replace with your desired type
   };
 
@@ -24,19 +24,19 @@ export class FilesEndpoint {
     return request;
   }
 
-  async downloadFile(fileId: ApiFile['id']) {
+  async downloadFile(fileId: ApiFile["id"]) {
     return {
       format: InternalFileType.PDF,
-      filename: 'dummy.pdf',
-      url: '/files/test.pdf',
+      filename: "dummy.pdf",
+      url: "/files/test.pdf",
     };
   }
 
-  async editedFile(fileId: ApiFile['id']) {
+  async editedFile(fileId: ApiFile["id"]) {
     return {
       format: InternalFileType.PDF,
-      filename: 'dummy.pdf',
-      url: '/files/test.pdf',
+      filename: "dummy.pdf",
+      url: "/files/test.pdf",
     };
   }
 }
