@@ -1,4 +1,3 @@
-import { NextRouter } from "next/router";
 import check from "./assets/check.svg";
 import cross from "./assets/cross.svg";
 import {
@@ -8,6 +7,7 @@ import {
   imagesFormat,
 } from "./constants";
 import { TranslationFunction } from "./types";
+import { NextRouter } from "next/router";
 
 export const getFileExtension = (filename: string) =>
   filename.substring(filename.lastIndexOf(".") + 1, filename.length);
@@ -39,11 +39,10 @@ export const getAnnualFormattedPrice = (
   currency: Currency = Currency.EUR
 ) => {
   const value = (price / 100 / 12).toFixed(2);
+  const curr = getCurrency(
+    price === SOME_INTERESTING_PRICE ? Currency.EUR : currency
+  );
 
-  const curr =
-    price === SOME_INTERESTING_PRICE
-      ? getCurrency(Currency.EUR)
-      : getCurrency(currency);
   return `${curr}${value}`;
 };
 
@@ -53,6 +52,7 @@ interface IGetPlanBullets {
   t: TranslationFunction;
 }
 
+const BULLETS_LENGTH = 8;
 export const getPlanBullets = ({
   type,
   disabledFeatures,
@@ -60,10 +60,10 @@ export const getPlanBullets = ({
 }: IGetPlanBullets) => {
   const bulletPoints = [];
 
-  for (let i = 0; i < 8; i++) {
+  for (let i = 1; i <= BULLETS_LENGTH; i++) {
     bulletPoints.push({
       imgSrc: disabledFeatures.includes(i) ? cross : check,
-      text: <span>{t(`payment_page.plans.${type}.bullet${i + 1}`)}</span>,
+      text: <span>{t(`payment_page.plans.${type}.bullet${i}`)}</span>,
     });
   }
 
@@ -82,17 +82,14 @@ export const getPlanPrices = ({
   fullPrice,
   trialPrice,
   currency,
-}: IGetPlanPrices) => {
-  return type !== PlanTypes.ANNUAL
-    ? {
-        price: getTrialFormattedPrice(trialPrice, currency),
-        fullPrice: getTrialFormattedPrice(fullPrice, currency),
-        formattedCurrency: getCurrency(currency),
-      }
-    : {
-        fullPrice: getTrialFormattedPrice(fullPrice, currency),
-        price: getAnnualFormattedPrice(fullPrice, currency),
-      };
-};
+}: IGetPlanPrices) => ({
+  price:
+    type !== PlanTypes.ANNUAL
+      ? getAnnualFormattedPrice(fullPrice, currency)
+      : getTrialFormattedPrice(trialPrice, currency),
+  fullPrice: getTrialFormattedPrice(fullPrice, currency),
+  formattedCurrency: getCurrency(currency),
+});
 
-export const isFromEmail = (router: NextRouter) => router.query?.fromEmail === "true";
+export const isFromEmail = (router: NextRouter) =>
+  router.query?.fromEmail === "true";

@@ -46,7 +46,7 @@ export function useGetSubscriptionProducts(): IGetSubscriptionProducts {
       id: "7263778346846873jdbsbd4738749",
       name: PaymentPlanId.MONTHLY,
       trial_payment_action: null,
-      disabledFeatures: [3, 4, 5, 6, 7],
+      disabledFeatures: [4, 5, 6, 7, 8],
       type: PlanTypes.MONTHLY,
       price: {
         country: null,
